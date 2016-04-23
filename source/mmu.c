@@ -10,10 +10,10 @@ void mmu_small(unsigned int vadd, unsigned int padd, unsigned int flags, unsigne
 	unsigned int rb;
 	unsigned int rc;
 	unsigned int mmu_base = (unsigned int)(&__end);
-	
+
 	ra = vadd >> 20;
 	rb = (mmu_base&PAGE_TABLE_L1_BASE_ADDR_MASK) | (ra << 2);
-	rc = (mmubase&0xFFFFFC00)|1;
+	rc = (mmubase&0xFFFFFC00)|1;   /*总共有2^8项 每项占4K*/
 	PUT32(rb, rc);   //first level descriptor
 	ra = (vadd>>12)&0xFF;
 	rb = (mmubase&0xFFFFFC00)|(ra << 2);
@@ -25,12 +25,14 @@ void init_sys_mmu(void)
 {
 	int i;
 
-	unsigned int mmu_base = (unsigned int)(&__end);
+	unsigned int mmu_base = (unsigned int)(&__end)+(0x1<<15);
 
 	for(i = 0; i < (MEM_MAP_SIZE>>12); i++)
-		mmu_small(VIRTUAL_MEM_ADDR+(i<<12), PHYSICAL_MEM_ADDR+(i<<12), 0, mmu_base+(0x1<<15)+i*4);
+		mmu_small(VIRTUAL_MEM_ADDR+(i<<12), PHYSICAL_MEM_ADDR+(i<<12), 0, mmu_base+i*4);
+	for(i = 0; i < (MEM_MAP_SIZE>>12); i++)
+		mmu_small(VIRTUAL_KERNEL_ADDR+(i<<12), PHYSICAL_KERNEL_ADDR+(i<<12), 0, mmu_base+((MEM_MAP_SIZE>>12)+i)*4);
 	for(i = 0; i < (IO_MAP_SIZE>>12); i++)
-		mmu_small(VIRTUAL_IO_ADDR+(i<<12), PHYSICAL_IO_ADDR+(i<<12), 0, mmu_base+(0x1<<15)+((MEM_MAP_SIZE>>12)+i)*4);
+		mmu_small(VIRTUAL_IO_ADDR+(i<<12), PHYSICAL_IO_ADDR+(i<<12), 0, mmu_base+(2*(MEM_MAP_SIZE>>12)+i)*4);
 }
 
 void start_mmu(void)

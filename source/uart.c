@@ -90,3 +90,19 @@ void IntToString(unsigned int _int, char * _char)
 		_int /= 10;
 	}
 }
+
+void HexToString(unsigned int _int, char *_char)
+{
+  int i = 0;
+  _char[0] = '0';
+  _char[1] = 'x';
+  for(i = 9; i >= 2; i--)
+  {
+    unsigned int _temp = _int & 0xf;
+    if(_temp <= 0x9)
+      _char[i] = '0'+_temp;
+    else
+      _char[i] = 'A'+_temp-0xA;
+    _int = _int >> 4;
+  }
+}

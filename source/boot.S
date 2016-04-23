@@ -1,9 +1,10 @@
 // To keep this in the first portion of the binary.
 .section ".text.boot"
- 
+
 // Make _start global.
+
 .globl _start
- 
+
 .equ    CPSR_MODE_USER,         		0x10
 .equ    CPSR_MODE_FIQ,          		0x11
 .equ    CPSR_MODE_IRQ,          		0x12
@@ -26,9 +27,9 @@ _start:
 	ldr pc, _vector_reserved
 	ldr pc, _vector_irq
 	ldr pc, _vector_fiq
-	
+
 	.align 4
-	
+
 	_vector_reset: .word __vector_reset
 	_vector_undefined: .word __vector_undefined
 	_vector_swi: .word __vector_swi
@@ -41,33 +42,33 @@ _start:
 __vector_reset:
 	mov 	r0, #0x8000
 	mov	r1, #0x0000
-	ldmia	r0!, {r2, r3, r4, r5, r6, r7, r8, r9} 
+	ldmia	r0!, {r2, r3, r4, r5, r6, r7, r8, r9}
 	stmia	r1!, {r2, r3, r4, r5, r6, r7, r8, r9}
-	ldmia	r0!, {r2, r3, r4, r5, r6, r7, r8, r9} 
+	ldmia	r0!, {r2, r3, r4, r5, r6, r7, r8, r9}
 	stmia	r1!, {r2, r3, r4, r5, r6, r7, r8, r9}
-	
+
 	// We're going to use interrupt mode, so setup the interrupt mode
 	// stack pointer which differs to the application stack pointer:
 	mov r0, #(CPSR_MODE_IRQ | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT )
 	msr cpsr_c, r0
 	mov sp, #0x8000
-	
+
 	mov r0,#CPSR_MODE_UNDEFINED
 	msr cpsr_c, r0
 	mov sp, #0x5000
-	
+
 	// Switch back to supervisor mode (our application mode) and
 	// set the stack pointer towards the end of RAM. Remember that the
 	// stack works its way down memory, our heap will work it's way
 	// up memory toward the application stack.
 	mov r0, #(CPSR_MODE_SVR | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT )
 	msr cpsr_c, r0
-	
+
 	mov     sp, #0x4000
 	sub     sp, sp, #0x4
 
 	bl kernel_main
- 
+
 	// halt
 halt:
 	wfe
@@ -99,7 +100,7 @@ _enable_interrupts:
 	mrs r0, cpsr
 	bic r0, r0, #0x80
 	msr cpsr_c, r0
-	
+
 	mov pc, lr
 
 .globl _disable_interrupts
@@ -107,7 +108,7 @@ _disable_interrupts:
 	mrs r0, cpsr
 	orr r0,r0,#0x80
 	msr cpsr_c,r0
-	
+
 	mov pc, lr
 
 .globl start_MMU
@@ -119,14 +120,14 @@ start_MMU:
 
 	mvn r2,#0
 	mcr p15,0,r2,c3,c0,0
-	
+
 	mcr p15,0,r0,c2,c0,0
 
 	mov r2,#0x1
 	mcr p15,0,r2,c1,c0,0
 
 	bx lr
-	
+
 .globl invalidate_tlbs
 invalidate_tlbs:
 	start:

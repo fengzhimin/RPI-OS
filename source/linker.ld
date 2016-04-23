@@ -1,5 +1,9 @@
+
+OUTPUT_FORMAT("elf32-littlearm")
+OUTPUT_ARCH(arm)
+
 ENTRY(_start)
- 
+
 SECTIONS
 {
     /* Starts at LOADER_ADDR. */
@@ -13,7 +17,7 @@ SECTIONS
     }
     . = ALIGN(4096); /* align to page size */
     __text_end = .;
- 
+
     __rodata_start = .;
     .rodata :
     {
@@ -21,7 +25,7 @@ SECTIONS
     }
     . = ALIGN(4096); /* align to page size */
     __rodata_end = .;
- 
+
     __data_start = .;
     .data :
     {
@@ -29,7 +33,7 @@ SECTIONS
     }
     . = ALIGN(4096); /* align to page size */
     __data_end = .;
- 
+
     __bss_start = .;
     .bss :
     {

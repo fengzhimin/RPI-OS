@@ -9,11 +9,6 @@ void common_irq_handler(void)
 {
 	//sleep(500);
 	ArmTimer->IRQClear = 0x0;
-	char *_ch = "timer interrupts\n";
-	
-	int i;
-	for(i = 0; i < strlen(_ch); i++)
-		uart_putc(_ch[i]);
+	char *_ch = "timer interrupts\r\n";
+	uart_puts(_ch);
 }
-
-

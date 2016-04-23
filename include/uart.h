@@ -30,5 +30,6 @@ int strlen(const char* str);
 void uart_write(const unsigned char* buffer, int size);
 void uart_puts(const char* str);
 void IntToString(unsigned int _int, char *_char);
+void HexToString(unsigned int _int, char *_char);
 
 #endif
