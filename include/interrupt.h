@@ -1,7 +1,7 @@
 #ifndef __INTERRUPT_H__
 #define __INTERRUPT_H__
 
-#define INTERRUPT_CONTROLLER_BASE    0x7E00B200
+#define INTERRUPT_CONTROLLER_BASE    0xC100B200
 
 #define BASIC_ARM_TIMER_IRQ        (1 << 0)
 #define BASIC_ARM_MALBOX_IRQ       (1 << 1)

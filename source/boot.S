@@ -53,7 +53,15 @@ __vector_reset:
 	msr cpsr_c, r0
 	mov sp, #0x8000
 
-	mov r0,#CPSR_MODE_UNDEFINED
+	mov r0, #(CPSR_MODE_ABORT | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT )
+	msr cpsr_c, r0
+	mov sp, #0x7000
+
+	mov r0, #(CPSR_MODE_SYSTEM | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT )
+	msr cpsr_c, r0
+	mov sp, #0x6000
+
+	mov r0, #(CPSR_MODE_UNDEFINED | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT )
 	msr cpsr_c, r0
 	mov sp, #0x5000
 
@@ -75,15 +83,45 @@ halt:
 	b halt
 
 __vector_undefined:
-	nop
+	sub r14, r14, #4
+	stmfd r13!, {r0-r3, r14}
+
+	bl common_undef_handler
+
+	ldmfd r13!, {r0-r3, pc}^
+
 __vector_swi:
-	nop
+	sub r14, r14, #4
+	stmfd r13!, {r0-r3, r14}
+
+	bl common_swi_handler
+
+	ldmfd r13!, {r0-r3, pc}^
+
 __vector_prefetch_abort:
-	nop
+	sub r14, r14, #4
+	stmfd r13!, {r0-r3, r14}
+
+	bl common_pref_handler
+
+	ldmfd r13!, {r0-r3, pc}^
+
 __vector_data_abort:
-	nop
+	sub r14, r14, #4
+	stmfd r13!, {r0-r3, r14}
+
+	bl common_Dabt_handler
+
+	ldmfd r13!, {r0-r3, pc}^
+
 __vector_reserved:
-	nop
+	sub r14, r14, #4
+	stmfd r13!, {r0-r3, r14}
+
+	bl common_res_handler
+
+	ldmfd r13!, {r0-r3, pc}^
+
 __vector_irq:
 	sub r14, r14, #4
 	stmfd r13!, {r0-r3, r14}
@@ -93,7 +131,13 @@ __vector_irq:
 	ldmfd r13!, {r0-r3, pc}^
 
 __vector_fiq:
-	nop
+	sub r14, r14, #4
+	stmfd r13!, {r0-r3, r14}
+
+	bl common_fiq_handler
+
+	ldmfd r13!, {r0-r3, pc}^
+
 
 .globl _enable_interrupts
 _enable_interrupts:
@@ -128,20 +172,26 @@ start_MMU:
 
 	bx lr
 
-.globl invalidate_tlbs
-invalidate_tlbs:
-	start:
-	mov r2, #0
-	mcr p15,0,r2,c8,c7,0
-	mcr p15,0,r2,c7,c10,4
-	bx lr
 
 .globl PUT32
 PUT32:
-	str r1, [r0]
-	bx lr
+    str r1,[r0]
+    bx lr
+
+.globl PUT16
+PUT16:
+    strh r1,[r0]
+    bx lr
 
 .globl GET32
 GET32:
-	ldr r0, [r0]
-	bx lr
+    ldr r0,[r0]
+    bx lr
+
+.globl BRANCHTO
+BRANCHTO:
+    bx r0
+
+.globl dummy
+dummy:
+    bx lr

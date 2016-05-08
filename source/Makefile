@@ -9,6 +9,7 @@ all:
 	mountU.sh
 
 ${OBJ}:kernel.elf
+	${GNU}objdump -D kernel.elf > kernel.list
 	${GNU}objcopy $^ -O binary $@
 
 boot.o:boot.S

@@ -1,19 +1,19 @@
 #ifndef __TIMER_H__
 #define __TIMER_H__
 
-#define TIMER_BASE    0x7E003000
-#define TIMER_CS      0X7E003000
-#define TIMER_CL0     0x7E003004
-#define TIMER_CHI     0x7E003008
-#define TIMER_C0      0x7E00300c
-#define TIMER_C1      0x7E003010
-#define TIMER_C2      0x7E003014
-#define TIMER_C3      0x7E003018
+#define TIMER_BASE    0xC1003000
+#define TIMER_CS      0xC1003000
+#define TIMER_CL0     0xC1003004
+#define TIMER_CHI     0xC1003008
+#define TIMER_C0      0xC100300c
+#define TIMER_C1      0xC1003010
+#define TIMER_C2      0xC1003014
+#define TIMER_C3      0xC1003018
 
 /****
 ARM timer
 ****/
-#define ARMTIMER_BASE  0x7E00B400
+#define ARMTIMER_BASE  0xC100B400
 
 #define ARMTIMER_CTRL_23BIT            (1 << 1)
 #define ARMTIMER_CTRL_PRESCALE_1       (0 << 2)
