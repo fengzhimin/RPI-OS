@@ -3,6 +3,8 @@
 extern void PUT32(unsigned int , unsigned int);
 extern unsigned int GET32(unsigned int);
 extern unsigned int __end;
+unsigned int *PTD = NULL; //页目录的指针
+unsigned int *PT  = NULL;  //页表的指针
 
 void mmu_small(unsigned int vadd, unsigned int padd, unsigned int flags, unsigned int mmubase)
 {
@@ -61,9 +63,9 @@ unsigned int init_paging(unsigned int physfree)
     /*
      * 分配页目录
      */
-    pgdir=(unsigned int *)physfree;
+    PTD = pgdir=(unsigned int *)physfree;
     physfree += PGDR_SIZE;
-    pte = (unsigned int *)physfree;
+    PT = pte = (unsigned int *)physfree;
 
     /*分配20张小页表 并且将填充页目录*/
     for(i = 0; i < NR_KERN_PAGETABLE; i++)
@@ -72,8 +74,10 @@ unsigned int init_paging(unsigned int physfree)
         physfree += (1<<10);
     }
 
+		physfree = PAGE_ROUNDUP(physfree);   //物理内存对其
+
     /*设置恒等隐射，填充小页表 隐射物理地址为[0, &__end] 虚拟地址[0, &__end] [KERNBASE, R(&__end)]*/
-    for(i = 0; i < (PAGE_ROUNDUP(physfree)>>PAGE_SHIFT); i++)
+    for(i = 0; i < (physfree>>PAGE_SHIFT); i++)
     {
         pte[i] = ((i<<PAGE_SHIFT)&0xFFFFF000)|0xFF|PTE_W;
     }
@@ -102,4 +106,11 @@ unsigned int init_paging(unsigned int physfree)
      );
 
     return physfree;
+}
+
+void init_ram(unsigned int physfree)
+{
+	g_ram_zone[0] = physfree;
+	g_ram_zone[1] = 0x20000000-0x1;
+	g_ram_zone[2] = 0;
 }

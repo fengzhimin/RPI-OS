@@ -1,6 +1,8 @@
 #ifndef __MMU_H__
 #define __MMU_H__
 
+#include "base.h"
+
 #define PAGE_TABLE_L1_BASE_ADDR_MASK      (0xffffc000)
 #define PHYSICAL_MEM_ADDR                 0x00000000
 #define VIRTUAL_MEM_ADDR                  0x00000000
@@ -23,13 +25,16 @@
 #define NR_KERN_PAGETABLE    20
 #define VADDR(pdi, pti) ((unsigned int)(((pdi)<<PGDR_SHIFT)|((pti)<<PAGE_SHIFT)))
 #define KERNBASE  VADDR(0xC00, 0)
-#define R(x) ((x)+KERNBASE)
+#define R(x) ((x)-KERNBASE)
 
 #define MMU_BASE(x)        ((x|PGDR_MASK)&~PGDR_MASK)
+#define RAM_ZONE_LEN (2 * 8)
+unsigned int g_ram_zone[RAM_ZONE_LEN];
 
 void mmu_small(unsigned int vadd, unsigned int padd, unsigned int flags, unsigned int mmubase);
 void init_sys_mmu(void);
 void start_mmu(void);
 unsigned int init_paging(unsigned int physfree);
+void init_ram(unsigned int physfree);
 
 #endif

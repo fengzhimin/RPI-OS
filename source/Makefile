@@ -1,7 +1,8 @@
 GNU = arm-none-eabi-
 CFLAGS = -mcpu=arm1176jzf-s -fpic -ffreestanding -I ../include
 OBJ = ../kernel.img
-SOURCE = kernel.o boot.o linker.ld mmu.o uart.o interrupt.o timer.o
+SOURCE = kernel.o boot.o linker.ld mmu.o uart.o interrupt.o timer.o \
+				 task.o
 
 all:
 	make ${OBJ}
@@ -30,6 +31,9 @@ interrupt.o:interrupt.c
 timer.o:timer.c
 	${GNU}gcc ${CFLAGS} -std=gnu99 -c $^ -o $@ -Wall -Wextra
 
+task.o:task.c
+	${GNU}gcc ${CFLAGS} -std=gnu99 -c $^ -o $@ -Wall -Wextra
+
 kernel.elf:$(SOURCE)
 	${GNU}gcc -T linker.ld -o $@ -ffreestanding -O2 -nostdlib $(SOURCE)
 
@@ -38,3 +42,4 @@ clean:
 	rm -f *.o
 	rm -f *.elf
 	rm -f *.img
+	rm -f *.list
