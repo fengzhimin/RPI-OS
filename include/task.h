@@ -43,6 +43,7 @@ struct context{
   unsigned int sp;
   unsigned int lr;
   unsigned int pc;
+	unsigned int cpsr;
   unsigned int spsr;
 };
 

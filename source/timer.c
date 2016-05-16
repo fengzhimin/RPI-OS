@@ -15,7 +15,7 @@ int sleep(int ms)
 	us = ms*1000;
 	current_time = *TIMER_CL0_P;
 	while((*TIMER_CL0_P - current_time) < us);
-	
+
 	return 0;
 }
 
@@ -26,9 +26,9 @@ void init_arm_timer(unsigned int Load)
 	IRQcontroller->Enable_Basic_IRQs = BASIC_ARM_TIMER_IRQ;
 	ArmTimer->Load = Load;
 	ArmTimer->Reload = Load;
-	ArmTimer->PreDivider = 0xF9;   //timer_clock = 250000000/(PreDivide + 1)
-	ArmTimer->Control = ARMTIMER_CTRL_23BIT | 
-			    ARMTIMER_CTRL_PRESCALE_1 | 
-			    ARMTIMER_CTRL_INT_ENABLE | 
+	ArmTimer->PreDivider = 0x14;   //timer_clock = 250000000/(PreDivide + 1)
+	ArmTimer->Control = ARMTIMER_CTRL_23BIT |
+			    ARMTIMER_CTRL_PRESCALE_1 |
+			    ARMTIMER_CTRL_INT_ENABLE |
 		 	    ARMTIMER_CTRL_ENABLE;
 }

@@ -123,11 +123,18 @@ __vector_reserved:
 	ldmfd r13!, {r0-r3, pc}^
 
 __vector_irq:
+	sub		lr, lr, #4
+	//保存所有的寄存器状态,要把寄存器保存到内存中.先用sp作为临时的基地址
+	str		r0, [sp, #-4]
+	str		r1, [sp, #-8]
+
 	.word	task_global			//加载任务状态内存基地址
 	ldr		r1, [pc, #-12]
 	ldr		r0, [r1]
 
+	ldr		r1, [sp, #-4]
 	str		r1, [r0, #(0 * 4)]	//r0
+	ldr		r1, [sp, #-8]
 	str		r1, [r0, #(1 * 4)]	//r1
 
 	str		r2, [r0, #(2 * 4)]	//r2
@@ -141,10 +148,10 @@ __vector_irq:
 	str		r10, [r0, #(10 * 4)]
 	str		r11, [r0, #(11 * 4)]
 	str		r12, [r0, #(12 * 4)]		//r12
-	str		r15, [r0, #(15 * 4)]		//r15
+	str		r14, [r0, #(15 * 4)]		//r15
 
-	mrs		r1, cpsr
-	str		r1, [r0, #(16 * 4)]			//spsr
+	mrs		r1, spsr
+	str		r1, [r0, #(16 * 4)]			//cpsr
 
 	mrs		r1, cpsr					//从irq切换到svc
 	bic 	r1, r1, #0x1F				// 不可以 bic 	r1, r1, #0xFF,  不知道原因
@@ -153,12 +160,20 @@ __vector_irq:
 
 	str		r13,[r0, #(13 * 4)]		//13
 	str		r14,[r0, #(14 * 4)]		//14
+	mrs		r1, spsr
+	str		r1, [r0, #(17 * 4)]			//spsr
+
+//==========================================
+	mov	r2, #1					//清除timer irq
+	.word	0xC100B400
+	ldr		r3, [pc, #-12]
+	str		r2, [r3, #12]
 
 	bl    common_irq_handler		//系统时钟
 	bl		task_schedule					//任务调度
 
 //==========================================
-	.word	task_global			//加载任务状态内存基地址
+  .word	task_global			//加载任务状态内存基地址
 	ldr		r1, [pc, #-12]
 
 	ldr		r0, [r1]
@@ -180,7 +195,7 @@ __vector_irq:
 	ldr		r1,[r0, #(15 * 4)]			//将pc的值临时放在sp-4中,因为寄存器都恢复后只有sp指向的内存是安全的
 	str		r1, [sp, #-4]
 
-	ldr		r1, [r0, #(16 * 4)]			//spsr
+	ldr		r1, [r0, #(16 * 4)]			//cpsr
 	str		r1, [sp, #-8]
 	msr		cpsr, r1					//这里也就打开中断了
 

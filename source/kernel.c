@@ -18,26 +18,55 @@ void task_idle0(void)
 {
   while(1)
   {
-    uart_puts("Hello first task create success!\r\n");
-    sleep(100);
+    int i;
+    for(i = 0; i < 10; i++)
+    {
+      uart_puts("Hello first task create success!");
+      uart_putc(i+'0');
+      uart_puts("\r\n");
+    }
   }
 }
 
 void task_idle1(void)
 {
+  int i;
   while(1)
   {
-    uart_puts("Hello second task create success!\r\n");
-    sleep(100);
+    for(i = 0; i < 10; i++)
+    {
+      uart_puts("Hello second task create success!");
+      uart_putc(i+'0');
+      uart_puts("\r\n");
+    }
   }
 }
 
 void task_idle2(void)
 {
+  int i;
   while(1)
   {
-    uart_puts("Hello third task create success!\r\n");
-    sleep(100);
+    for(i = 0; i < 10; i++)
+    {
+      uart_puts("Hello third task create success!");
+      uart_putc(i+'0');
+      uart_puts("\r\n");
+    }
+  }
+}
+
+void task_idle3(void)
+{
+  int i;
+  while(1)
+  {
+    for(i = 0; i < 10; i++)
+    {
+      uart_puts("Hello fourth task create success!");
+      uart_putc(i+'0');
+      uart_puts("\r\n");
+    }
   }
 }
 
@@ -74,6 +103,9 @@ void kernel_main()
 	TID = task_create( rank , task_func);
 	task_run(TID);
 	task_func = (unsigned int)task_idle2;
+	TID = task_create( rank , task_func);
+	task_run(TID);
+  task_func = (unsigned int)task_idle3;
 	TID = task_create( rank , task_func);
 	task_run(TID);
 	init_arm_timer(Kernel_1Hz);
