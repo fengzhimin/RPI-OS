@@ -63,9 +63,11 @@ unsigned int init_paging(unsigned int physfree)
     /*
      * 分配页目录
      */
-    PTD = pgdir=(unsigned int *)physfree;
+    pgdir=(unsigned int *)physfree;
+		PTD = (unsigned int *)(physfree+0xC0000000);
     physfree += PGDR_SIZE;
-    PT = pte = (unsigned int *)physfree;
+    pte = (unsigned int *)physfree;
+		PT = (unsigned int *)(physfree+0xC0000000);
 
     /*分配20张小页表 并且将填充页目录*/
     for(i = 0; i < NR_KERN_PAGETABLE; i++)
